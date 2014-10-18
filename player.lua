@@ -35,7 +35,7 @@ function Player:angle()
 end
 
 function Player:radius()
-    return self.physics.getShape():getRadius()
+    return self.physics:getShape():getRadius()
 end
 
 function Player:keypressed(key)
@@ -55,7 +55,12 @@ end
 
 function Player:update(dt)
 
-    --self:update_player_orientation
+    --self:update_player_orientation()
+    --self:update_player_movement()
+end
+
+
+function Player:update_player_orientation()
     -- point player in direction of mouse
     local p = Vector(love.mouse.getPosition()) - Vector(self:pos())
 
