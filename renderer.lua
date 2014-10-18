@@ -1,5 +1,6 @@
 local Camera = require 'hump.camera'
 local Class  = require 'hump.class'
+local Vector = require 'hump.vector'
 local Utils  = require 'utils'
 
 local Renderer = Class({})
@@ -36,13 +37,35 @@ end
 
 
 function Renderer:draw_world()
+    local width,height = love.graphics.getDimensions()
+    local px, py       = self.player:pos()
+    --  r,g,b,a = love.graphics.getColor!
+    -- love.graphics.setColor 100, 100, 100
+
+    -- for y = 1, model.height
+    --     for x = 1, model.width
+    --         love.graphics.circle( 'fill', 32*x, 32*y, 2 )
+    
+    -- love.graphics.setColor r,g,b,a
+
+    local r,b,g,a = love.graphics.getColor()
+    love.graphics.setColor(0x04,0x64,0xe0)
+        for y=-height/50-1,height/50 + 1 do
+            for x = -height/50-1,width/50 + 1 do
+                love.graphics.circle('fill',50*(x-px)+5*(math.random()-.5),50*(y-py)+5*(math.random()-.5),2)
+            end
+        end
+    love.graphics.setColor(r,g,b,a)
+
     local r,b,g,a = love.graphics.getColor()
     love.graphics.setColor(255,255,255)
         local x,y = self.player:pos()
         local r   = self.player:radius()
         local angle = self.player:angle()
+        look_x, look_y = Vector(r,0):rotated(angle):unpack()
         
         love.graphics.circle('line',x,y,r,50)
+        love.graphics.line(x,y,x+look_x,y+look_y)
     love.graphics.setColor(r,g,b,a)
 end
 
@@ -83,8 +106,8 @@ end
 
 function Renderer:update(dt)
     local px, py = self.player:pos()
-    local dx = self.camera.x - px
-    local dy = self.camera.y - py
+    local dx = px - self.camera.x
+    local dy = py - self.camera.y
 
     self.camera:move(4*dx*dt,4*dy*dt)
 end
