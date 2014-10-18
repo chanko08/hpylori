@@ -9,7 +9,7 @@ local Player = Class({
     MAX_THRUST_ACCELERATION = 1,
     
 
-    MAX_STRAFE_ACCELERATION = 0.1,
+    MAX_STRAFE_ACCELERATION = 0.5,
     
     MAX_MOVEMENT_SPEED = 10,
     })
@@ -32,6 +32,8 @@ function Player:init(state, initial_x, initial_y, beginning_radius)
 
     self.thrust = 0
     self.strafe = 0
+
+    self.look_direction = Vector(0,0)
 
     local register = Utils.make_registration_func(self, state.registry)
 
@@ -63,6 +65,11 @@ function Player:keypressed(key)
     elseif key == 'd' then
         self.strafe = Player.MAX_STRAFE_ACCELERATION
     end
+
+
+    if key == ' ' then
+        self.fire_bullets = true
+    end
 end
 
 
@@ -77,10 +84,15 @@ function Player:keyreleased( key )
     elseif key == 'd' and self.strafe > 0 then
         self.strafe = 0
     end
+
+
 end
 
 
 function Player:update(dt)
+
+    self.look_direction = Vector(love.mouse.getPosition()) - Vector(self:pos())
+    self.look_direction:normalize_inplace()
 
     self:update_orientation()
     self:update_movement()
@@ -92,10 +104,12 @@ function Player:update_orientation()
     local p = Vector(love.mouse.getPosition()) - Vector(self:pos())
 
     --calculate angle between up and the line made by mouse and player pos
-    local current_angle = Vector(r0, 1):angleTo(p)
+    local current_angle = Vector(0, 1):angleTo(p)
+
     local a = self:angle()
 
     local pbody = self.physics:getBody()
+    pbody:setAngle(current_angle)
 
     if a - current_angle > 1 then
         local sign = -1
@@ -110,13 +124,17 @@ function Player:update_orientation()
         --pbody:setAngularVelocity(0)
         --print('no turn...')
     end
+
+
+
 end
 
 
 function Player:update_movement()
     -- body
-    local p = self.thrust * Vector(0, 1):rotated(self:angle())
-    p = p + self.strafe * Vector(1, 0):rotated(self:angle())
+    local p = self.thrust * Vector(1, 0):rotated(self:angle())
+
+    p = p + self.strafe * Vector(1, 0):rotated(self:angle() + math.pi / 2)
 
     
     self.physics:getBody():applyLinearImpulse(p:unpack())
@@ -132,7 +150,6 @@ function Player:update_movement()
         lin_vel = Player.MAX_MOVEMENT_SPEED * lin_vel:normalized()
         self.physics:getBody():setLinearVelocity(lin_vel:unpack())
     end
-
 end
 
 return Player
