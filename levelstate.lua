@@ -2,6 +2,7 @@ local Class  = require('hump.class')
 local Signal = require('hump.signal')
 
 local Player = require('player')
+local Renderer = require('renderer')
 
 
 local LevelState = Class({})
@@ -17,6 +18,8 @@ function LevelState:init()
     self.physics_world = love.physics.newWorld(0, 0, true)
 
     self.player = Player(self, 0, 0, 64)
+
+    self.renderer = Renderer(self)
 end
 
 function LevelState:enter( prev, ... )
