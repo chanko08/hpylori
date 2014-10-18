@@ -31,7 +31,8 @@ function LevelState:leave()
 end
 
 function LevelState:update( dt )
-    -- body
+    -- bodys
+    self.registry:emit('mousemove', self.renderer:world_coords(love.mouse.getPosition()))
     self.physics_world:update(dt)
     self.registry:emit('update', dt)
 end
