@@ -20,22 +20,22 @@ function LevelState:init()
 end
 
 function LevelState:enter( prev, ... )
-    self.registry:emit('state_enter', key)
+    self.registry:emit('state_enter', prev, ...)
 end
 
 function LevelState:leave()
-    self.registry:emit('state_leave', key)
+    self.registry:emit('state_leave')
 end
 
 function LevelState:update( dt )
     -- body
     self.physics_world:update(dt)
-    self.registry:emit('update', key)
+    self.registry:emit('update', dt)
 end
 
 function LevelState:draw()
     -- body
-    self.registry:emit('draw', key)
+    self.registry:emit('draw')
 
 end
 
