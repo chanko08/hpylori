@@ -1,4 +1,5 @@
 local Utils = require('utils')
+local Direction = Utils.Direction
 
 local Class = require('hump.class')
 local Vector = require('hump.vector')
@@ -13,7 +14,9 @@ local Player = Class({
     
     MAX_MOVEMENT_SPEED = 10,
 
-    MOVEMENT_DAMPING_COEFF = 1
+    MOVEMENT_DAMPING_COEFF = 1,
+
+    DENSITY = 1
     })
 
 
@@ -25,22 +28,16 @@ function Player:init( state, initial_x, initial_y, beginning_radius )
         initial_x,
         initial_y, 
         'dynamic')
+
     body:setLinearDamping(Player.MOVEMENT_DAMPING_COEFF)
 
     local shape = love.physics.newCircleShape(beginning_radius)
 
     self.level_state = state
-    self.physics = love.physics.newFixture(body, shape, density)
+    self.physics = love.physics.newFixture(body, shape, Player.DENSITY)
 
     self.thrust = 0
     self.strafe = 0
-
-    local register = Utils.make_registration_func(self, state.registry)
-
-    register('keypressed', self.keypressed)
-    register('keyreleased', self.keyreleased)
-    register('update', self.update)
-    register('mousemove', self.mousemove)
 end
 
 function Player:pos()
@@ -55,15 +52,17 @@ function Player:radius()
     return self.physics:getShape():getRadius()
 end
 
-function Player:keypressed( key )
-    print('key pressed', key)
-    if key == 'w' then
+function Player:move( direction )
+    if direction == Direction.FORWARD then
         self.thrust = Player.MAX_THRUST_ACCELERATION
-    elseif key == 'a' then
-        self.strafe = -1 * Player.MAX_STRAFE_ACCELERATION
-    elseif key == 's' then
+
+    elseif direction == Direction.BACKWARD then
         self.thrust = -1 * Player.MAX_THRUST_ACCELERATION
-    elseif key == 'd' then
+
+    elseif direction == Direction.STRAFE_LEFT then
+        self.strafe = -1 * Player.MAX_STRAFE_ACCELERATION
+
+    elseif direction == Direction.STRAFE_RIGHT then
         self.strafe = Player.MAX_STRAFE_ACCELERATION
     end
 
@@ -74,30 +73,24 @@ function Player:keypressed( key )
 end
 
 
-function Player:keyreleased( key )
+function Player:stop_move( direction )
     -- body
-    if key == 'w' and self.thrust > 0 then
+    print('stop', '')
+    if direction == Direction.FORWARD and self.thrust > 0 then
         self.thrust = 0
-    elseif key == 'a' and self.strafe < 0 then
+
+    elseif direction == Direction.STRAFE_LEFT and self.strafe < 0 then
         self.strafe = 0
-    elseif key == 's' and self.thrust < 0 then
+
+    elseif direction == Direction.BACKWARD and self.thrust < 0 then
         self.thrust = 0
-    elseif key == 'd' and self.strafe > 0 then
+
+    elseif direction == Direction.STRAFE_RIGHT and self.strafe > 0 then
         self.strafe = 0
     end
 
 
 end
-
-
-function Player:update( dt )
-    self:update_movement()
-end
-
-function Player:mousemove( x, y )
-    self:update_orientation(x, y)
-end
-
 
 function Player:update_orientation( mouse_world_x, mouse_world_y )
     -- point player in direction of mouse
@@ -122,11 +115,7 @@ function Player:update_movement()
 
     
     self.physics:getBody():applyLinearImpulse(p:unpack())
-
-
-    --print(Vector(self:pos()))
-    --print(Vector(self.physics:getBody():getLinearVelocity()):len())
-
+    
     --cap linear veloctity
     local lin_vel = Vector(self.physics:getBody():getLinearVelocity())
 
