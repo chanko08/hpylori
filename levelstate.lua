@@ -16,7 +16,7 @@ function LevelState:init()
     love.physics.setMeter(64)
     self.physics_world = love.physics.newWorld(0, 0, true)
 
-    self.player = Player:init(self, 0, 0, 64)
+    self.player = Player(self, 0, 0, 64)
 end
 
 function LevelState:enter( prev, ... )

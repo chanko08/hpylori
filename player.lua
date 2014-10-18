@@ -8,8 +8,6 @@ function Player:init(state, initial_x, initial_y, beginning_radius)
     local shape = love.physics.newCircleShape(beginning_radius)
 
     self.physics = love.physics.newFixture(body, shape, density)
-
-
 end
 
 
