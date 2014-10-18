@@ -16,7 +16,7 @@ local Player = Class({
 
 
 
-function Player:init(state, initial_x, initial_y, beginning_radius)
+function Player:init( state, initial_x, initial_y, beginning_radius )
 
     local body = love.physics.newBody(
         state.physics_world,
@@ -33,13 +33,12 @@ function Player:init(state, initial_x, initial_y, beginning_radius)
     self.thrust = 0
     self.strafe = 0
 
-    self.look_direction = Vector(0,0)
-
     local register = Utils.make_registration_func(self, state.registry)
 
     register('keypressed', self.keypressed)
     register('keyreleased', self.keyreleased)
     register('update', self.update)
+    register('mousemove', self.mousemove)
 end
 
 function Player:pos()
@@ -54,7 +53,7 @@ function Player:radius()
     return self.physics:getShape():getRadius()
 end
 
-function Player:keypressed(key)
+function Player:keypressed( key )
     print('key pressed', key)
     if key == 'w' then
         self.thrust = Player.MAX_THRUST_ACCELERATION
@@ -89,19 +88,18 @@ function Player:keyreleased( key )
 end
 
 
-function Player:update(dt)
-
-    self.look_direction = Vector(love.mouse.getPosition()) - Vector(self:pos())
-    self.look_direction:normalize_inplace()
-
-    self:update_orientation()
+function Player:update( dt )
     self:update_movement()
 end
 
+function Player:mousemove( x, y )
+    self:update_orientation(x, y)
+end
 
-function Player:update_orientation()
+
+function Player:update_orientation( mouse_world_x, mouse_world_y )
     -- point player in direction of mouse
-    local p = Vector(love.mouse.getPosition()) - Vector(self:pos())
+    local p = Vector(mouse_world_x, mouse_world_y) - Vector(self:pos())
 
     --calculate angle between up and the line made by mouse and player pos
     local current_angle = Vector(0, 1):angleTo(p)
