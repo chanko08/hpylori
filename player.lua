@@ -12,6 +12,8 @@ local Player = Class({
     MAX_STRAFE_ACCELERATION = 0.5,
     
     MAX_MOVEMENT_SPEED = 10,
+
+    MOVEMENT_DAMPING_COEFF = 1
     })
 
 
@@ -23,7 +25,7 @@ function Player:init( state, initial_x, initial_y, beginning_radius )
         initial_x,
         initial_y, 
         'dynamic')
-    body:setLinearDamping(0.5)
+    body:setLinearDamping(Player.MOVEMENT_DAMPING_COEFF)
 
     local shape = love.physics.newCircleShape(beginning_radius)
 
@@ -99,31 +101,15 @@ end
 
 function Player:update_orientation( mouse_world_x, mouse_world_y )
     -- point player in direction of mouse
-    local p = Vector(mouse_world_x, mouse_world_y) - Vector(self:pos())
+    local p = Vector(mouse_world_x, -mouse_world_y) - Vector(self:pos())
 
     --calculate angle between up and the line made by mouse and player pos
-    local current_angle = Vector(0, 1):angleTo(p)
+    local current_angle = Vector(1, 0):angleTo(p)
 
     local a = self:angle()
 
     local pbody = self.physics:getBody()
     pbody:setAngle(current_angle)
-
-    if a - current_angle > 1 then
-        local sign = -1
-        if a - current_angle > math.pi then
-            sign = -1
-        end
-        --pbody:setAngularVelocity(sign * Player.MAX_TURN_SPEED)
-
-        --print('turning...', pbody:getAngularVelocity())
-        --print(current_angle, a)
-    else
-        --pbody:setAngularVelocity(0)
-        --print('no turn...')
-    end
-
-
 
 end
 
