@@ -37,7 +37,7 @@ function PlayerController:keypressed( key )
 
 
     if key == ' ' then
-        self.player.fire_bullets()
+        self.player.fire_bullets(true)
     end
 end
 
@@ -52,7 +52,7 @@ function PlayerController:keyreleased( key )
 
     elseif key == 's' then
         self.player:stop_move(Direction.BACKWARD)
-        
+
     elseif key == 'd' then
         self.player:stop_move(Direction.STRAFE_RIGHT)
     end
@@ -60,7 +60,7 @@ end
 
 
 function PlayerController:update( dt )
-    self.player:update_movement()
+    self.player:update(dt)
 end
 
 function PlayerController:mousemove( x, y )
