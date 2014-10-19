@@ -1,8 +1,8 @@
 local Class  = require('hump.class')
 local Signal = require('hump.signal')
 
-local Player = require('models.player')
 local PlayerController = require('controllers.playercontroller')
+local EnemySpawnController = require('controllers.enemyspawncontroller')
 local Renderer = require('renderer')
 
 
@@ -18,10 +18,14 @@ function LevelState:init()
     love.physics.setMeter(64)
     self.physics_world = love.physics.newWorld(0, 0, true)
 
-    self.player = Player(self, 0, 0, 64)
+    --these are attached later by the controllers for these models
+    self.player = {}
+    self.enemies = {}
 
     self.controllers = {}
-    self.controllers.Player = PlayerController(self, self.player)
+    self.controllers.Player = PlayerController(self, 0, 0)
+    self.controllers.enemies = {}
+    self.controllers.EnemySpawner = EnemySpawnController(self, self.controllers.enemies)
 
     self.renderer = Renderer(self)
 end

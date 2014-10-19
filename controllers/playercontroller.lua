@@ -4,14 +4,19 @@ local Direction = Utils.Direction
 local Class = require('hump.class')
 local Vector = require('hump.vector')
 
+local Player = require('models.player')
+
 
 local PlayerController = Class({})
 
 
 
-function PlayerController:init( state, player )
+function PlayerController:init( state, initial_x, initial_y )
+    print(state, initial_x, initial_y)
+    self.player = Player(state, initial_x, initial_y)
 
-    self.player = player
+    self.state = state
+    self.state.player = self.player
 
     local register = Utils.make_registration_func(self, state.registry)
 
@@ -37,7 +42,7 @@ function PlayerController:keypressed( key )
 
 
     if key == ' ' then
-        self.player.fire_bullets(true)
+        self.player:fire_bullets(true)
     end
 end
 
@@ -55,6 +60,10 @@ function PlayerController:keyreleased( key )
 
     elseif key == 'd' then
         self.player:stop_move(Direction.STRAFE_RIGHT)
+    end
+
+    if key == ' ' then
+        self.player:fire_bullets(false)
     end
 end
 

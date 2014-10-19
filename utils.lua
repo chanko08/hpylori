@@ -1,11 +1,16 @@
 local utils = {}
 
-function utils.make_registration_func(obj, registry)
+function utils.make_registration_func( obj, registry )
     return function(signal, method)
         registry:register(signal, function(...) method(obj, ...) end)
     end
 end
 
+function utils.self_wrapper( self )
+    return function(self_func)
+        return function(...) self_func(self, ...) end
+    end
+end
 
 local Direction = {}
 utils.Direction = Direction

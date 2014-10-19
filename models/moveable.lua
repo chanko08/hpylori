@@ -27,6 +27,7 @@ local Moveable = Class({})
 
 function Moveable:init( state, initial_x, initial_y, beginning_radius, conf )
     self.conf = conf or default_conf
+    self.state = state
 
     local body = love.physics.newBody(
         state.physics_world,

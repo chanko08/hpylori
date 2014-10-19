@@ -35,6 +35,20 @@ function Renderer:draw()
     self:draw_hud()
 end
 
+function Renderer:draw_moveable(m, color)
+    local col = color or {r=255,g=255,b=255}
+
+    local r,b,g,a = love.graphics.getColor()
+    love.graphics.setColor(col.r,col.g,col.b)
+        local x,y = m:pos()
+        local r   = m:radius()
+        local angle = m:angle()
+        look_x, look_y = Vector(r,0):rotated(angle):unpack()
+        
+        love.graphics.circle('line',x,y,r,50)
+        love.graphics.line(x,y,x+look_x,y+look_y)
+    love.graphics.setColor(r,g,b,a)
+end
 
 function Renderer:draw_world()
     local width,height = love.graphics.getDimensions()
@@ -57,16 +71,17 @@ function Renderer:draw_world()
         end
     love.graphics.setColor(r,g,b,a)
 
-    local r,b,g,a = love.graphics.getColor()
-    love.graphics.setColor(255,255,255)
-        local x,y = self.player:pos()
-        local r   = self.player:radius()
-        local angle = self.player:angle()
-        look_x, look_y = Vector(r,0):rotated(angle):unpack()
-        
-        love.graphics.circle('line',x,y,r,50)
-        love.graphics.line(x,y,x+look_x,y+look_y)
-    love.graphics.setColor(r,g,b,a)
+    self:draw_moveable(self.player)
+
+    local bcolor = {r=0, g=0, b=255}
+    for i,bullet in ipairs(self.player:fired_bullets()) do
+        self:draw_moveable(bullet, bcolor)
+    end
+
+    local ecolor = {r=255, g=0, b=255}
+    for i,enemy in ipairs(self.level_state.enemies) do
+        self:draw_moveable(enemy, ecolor)
+    end
 end
 
 function Renderer:draw_mouse()
