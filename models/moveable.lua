@@ -96,16 +96,14 @@ end
 
 function Moveable:update_orientation( dir_x, dir_y )
     -- point Moveable in direction of mouse
-    local p = Vector(dir_x, - dir_y) - Vector(self:pos())
+    local p = Vector(dir_x, dir_y) - Vector(self:pos())
+    p.y = -p.y
 
     --calculate angle between up and the line made by mouse and Moveable pos
     local current_angle = Vector(1, 0):angleTo(p)
 
-    local a = self:angle()
-
     local pbody = self.physics:getBody()
     pbody:setAngle(current_angle)
-
 end
 
 

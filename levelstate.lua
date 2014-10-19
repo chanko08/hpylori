@@ -40,7 +40,9 @@ end
 
 function LevelState:update( dt )
     -- bodys
-    self.registry:emit('mousemove', self.renderer:world_coords(love.mouse.getPosition()))
+    local mx, my = self.renderer:world_coords(love.mouse.getPosition())
+
+    self.registry:emit('mousemove', self.renderer.camera:mousepos())
     self.physics_world:update(dt)
     self.registry:emit('update', dt)
 end

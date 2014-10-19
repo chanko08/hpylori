@@ -40,7 +40,9 @@ function Renderer:draw_moveable(m, color)
 
     local r,b,g,a = love.graphics.getColor()
     love.graphics.setColor(col.r,col.g,col.b)
+        -- local x,y = self.camera:cameraCoords(m:pos())
         local x,y = m:pos()
+        --print('moveable',x,y)
         local r   = m:radius()
         local angle = m:angle()
         look_x, look_y = Vector(r,0):rotated(angle):unpack()
@@ -66,7 +68,7 @@ function Renderer:draw_world()
     love.graphics.setColor(0x04,0x64,0xe0)
         for y=-height/50-1,height/50 + 1 do
             for x = -height/50-1,width/50 + 1 do
-                love.graphics.circle('fill',50*(x-px)+5*(math.random()-.5),50*(y-py)+5*(math.random()-.5),2)
+                love.graphics.circle('fill',50*(x-px/50)+5*(math.random()-.5),50*(y-py/50)+5*(math.random()-.5),2)
             end
         end
     love.graphics.setColor(r,g,b,a)
@@ -121,6 +123,8 @@ end
 
 function Renderer:update(dt)
     local px, py = self.player:pos()
+    --print('player', px, py)
+    --print('camera', self.camera.x, self.camera.y)
     local dx = px - self.camera.x
     local dy = py - self.camera.y
 

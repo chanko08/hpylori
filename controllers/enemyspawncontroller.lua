@@ -37,7 +37,7 @@ end
 function EnemySpawnController:spawn()
     self.enemy_spawn_timer:add(ENEMY_SPAWN_CONF.SPAWN_DELAY, self.wrap(self.spawn))
     
-    local d = math.random(20, 100)
+    local d = math.random(80, 120)
     local a = math.random() * math.pi * 2
     local bpos = Vector(self.state.player:pos()) + Vector(d, 0):rotated(a)
 
