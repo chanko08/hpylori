@@ -46,12 +46,16 @@ end
 function  Player:update( dt )
     Moveable.update(self, dt)
 
+
+    for i,bullet in ipairs(self.bullets) do
+        bullet:update(dt)
+    end
+
     if self.is_firing_bullets == false then
         return
     end
 
     self.fire_bullet_delay = self.fire_bullet_delay - dt
-    print(self.fire_bullet_delay)
 
     if self.fire_bullet_delay <= 0 then
         --spawn bullets
@@ -64,9 +68,7 @@ function  Player:update( dt )
         table.insert(self.bullets, bullet)
     end
     
-    for i,bullet in ipairs(self.bullets) do
-        bullet:update(dt)
-    end
+    
 end
 
 
